@@ -1,3 +1,7 @@
+import os
+import threading
+from flask import Flask
+
 import asyncio
 import io
 import logging
@@ -444,4 +448,24 @@ async def on_app_command_error(interaction: discord.Interaction, error: app_comm
 if not config.DISCORD_TOKEN:
     raise RuntimeError("DISCORD_TOKEN manquant. Ajoute-le dans les variables d'environnement de Render.")
 
+# Serveur web pour Render
+app = Flask(__name__)
+
+@app.route("/")
+def home():
+    return "ECLIPSE RP BOT - ONLINE", 200
+
+@app.route("/health")
+def health():
+    return "OK", 200
+
+def run_web():
+    port = int(os.environ.get(""PORT"", 10000))
+    app.run(host="0.0.0.0", port=port, use_reloader=False)
+
+# Lancer Flask en arrière-plan
+web_thread = threading.Thread(target=run_web, daemon=True)
+web_thread.start()
+
+# Lancer le bot Discord
 bot.run(config.DISCORD_TOKEN)
