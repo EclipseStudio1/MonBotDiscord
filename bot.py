@@ -13,7 +13,7 @@ from discord.ext import commands
 from dotenv import load_dotenv
 
 load_dotenv()
-DISCORD_TOKEN = os.getenv("TOKEN")
+DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
 GUILD_ID = os.getenv("GUILD_ID")  # optionnel : serveur de test (commandes instantanées)
 
 # ============================================================
@@ -655,6 +655,6 @@ async def on_member_join(member: discord.Member):
 #  DÉMARRAGE
 # ============================================================
 if __name__ == "__main__":
-    if not TOKEN:
+    if not DISCORD_TOKEN:
         raise SystemExit("❌ Token manquant : crée un fichier .env avec TOKEN=ton_token")
     bot.run(TOKEN)
