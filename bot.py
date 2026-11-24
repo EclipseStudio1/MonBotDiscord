@@ -11,7 +11,19 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 from dotenv import load_dotenv
+from threading import Thread
+from flask import Flask
 
+web = Flask(__name__)
+
+@web.route("/")
+def home():
+    return "Bot en ligne"
+
+def run_web():
+    port = int(os.environ.get("PORT", 10000))
+    web.run(host="0.0.0.0", port=port)
+    
 load_dotenv()
 DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
 GUILD_ID = os.getenv("GUILD_ID")  # optionnel : serveur de test (commandes instantanées)
@@ -397,10 +409,13 @@ async def on_app_error(interaction: discord.Interaction, error: app_commands.App
     else:
         print(error)
         msg = "❌ Une erreur est survenue."
-    if interaction.response.is_done():
-        await interaction.followup.send(msg, ephemeral=True)
-    else:
-        await interaction.response.send_message(msg, ephemeral=True)
+    try:
+        if interaction.response.is_done():
+            await interaction.followup.send(msg, ephemeral=True)
+        else:
+            await interaction.response.send_message(msg, ephemeral=True)
+    except discord.NotFound:
+        pass  # interaction expirée, rien à faire
 
 
 # ============================================================
@@ -660,5 +675,6 @@ async def on_member_join(member: discord.Member):
 # ============================================================
 if __name__ == "__main__":
     if not DISCORD_TOKEN:
-        raise SystemExit("❌ Token manquant : crée un fichier .env avec TOKEN=ton_token")
+        raise SystemExit("❌ Token manquant : définis DISCORD_TOKEN")
+    Thread(target=run_web, daemon=True).start()
     bot.run(DISCORD_TOKEN)
