@@ -657,4 +657,4 @@ async def on_member_join(member: discord.Member):
 if __name__ == "__main__":
     if not DISCORD_TOKEN:
         raise SystemExit("❌ Token manquant : crée un fichier .env avec TOKEN=ton_token")
-    bot.run(TOKEN)
+    bot.run(DISCORD_TOKEN)
