@@ -384,7 +384,11 @@ bot = Bot()
 @bot.event
 async def on_ready():
     print(f"✅ Connecté en tant que {bot.user}")
-
+    # Nettoyage unique : supprime les anciennes commandes enregistrées par serveur
+    if not GUILD_ID:
+        for g in bot.guilds:
+            bot.tree.clear_commands(guild=g)
+            await bot.tree.sync(guild=g)
 
 @bot.tree.error
 async def on_app_error(interaction: discord.Interaction, error: app_commands.AppCommandError):
